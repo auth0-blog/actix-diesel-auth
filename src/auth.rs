@@ -1,3 +1,4 @@
+use crate::errors::ServiceError;
 use alcoholic_jwt::{token_kid, validate, Validation, JWKS};
 use serde::{Deserialize, Serialize};
 use std::error::Error;
@@ -9,7 +10,7 @@ struct Claims {
     exp: usize,
 }
 
-pub fn validate_token(token: &str) -> bool {
+pub fn validate_token(token: &str) -> Result<bool, ServiceError> {
     let domain = std::env::var("DOMAIN").expect("DOMAIN must be set");
     let jwks = fetch_jwks(&format!("{}{}", domain.as_str(), ".well-known/jwks.json"))
         .expect("failed to fetch jwks");
@@ -19,7 +20,7 @@ pub fn validate_token(token: &str) -> bool {
         .expect("failed to decode kid");
     let jwk = jwks.find(&kid).expect("Specified key not found in set");
     let res = validate(token, jwk, validations);
-    res.is_ok()
+    Ok(res.is_ok())
 }
 
 fn fetch_jwks(uri: &str) -> Result<JWKS, Box<dyn Error>> {
