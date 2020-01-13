@@ -43,7 +43,7 @@ pub async fn add_user(
 ) -> Result<HttpResponse, Error> {
     Ok(web::block(move || add_single_user(db, item))
         .await
-        .map(|user| HttpResponse::Ok().json(user))
+        .map(|user| HttpResponse::Created().json(user))
         .map_err(|_| HttpResponse::InternalServerError())?)
 }
 
