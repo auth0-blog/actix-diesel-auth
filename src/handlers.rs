@@ -68,7 +68,6 @@ fn db_get_user_by_id(pool: web::Data<Pool>, user_id: i32) -> Result<User, diesel
 fn get_all_users(pool: web::Data<Pool>) -> Result<Vec<User>, diesel::result::Error> {
     let conn = pool.get().unwrap();
     let items = users.load::<User>(&conn)?;
-    println!("{:?}", items);
     Ok(items)
 }
 
