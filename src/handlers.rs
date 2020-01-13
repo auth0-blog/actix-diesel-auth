@@ -1,11 +1,19 @@
-use super::models::{InputUser, NewUser, User};
+use super::models::{NewUser, User};
 use super::schema::users::dsl::*;
 use super::Pool;
 use crate::diesel::QueryDsl;
 use crate::diesel::RunQueryDsl;
 use actix_web::{web, Error, HttpResponse};
 use diesel::dsl::{delete, insert_into};
+use serde::{Deserialize, Serialize};
 use std::vec::Vec;
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct InputUser {
+    pub first_name: String,
+    pub last_name: String,
+    pub email: String,
+}
 
 // Handler for GET /users
 pub async fn get_users(db: web::Data<Pool>) -> Result<HttpResponse, Error> {

@@ -18,10 +18,3 @@ pub struct NewUser<'a> {
     pub email: &'a str,
     pub created_at: chrono::NaiveDateTime,
 }
-
-#[derive(Debug, Serialize, Deserialize)]
-pub struct InputUser {
-    pub first_name: String,
-    pub last_name: String,
-    pub email: String,
-}
