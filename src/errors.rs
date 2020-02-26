@@ -1,7 +1,5 @@
 use actix_web::{error::ResponseError, HttpResponse};
 use derive_more::Display;
-use diesel::result::{DatabaseErrorKind, Error as DBError};
-use std::convert::From;
 
 #[derive(Debug, Display)]
 pub enum ServiceError {
@@ -26,23 +24,6 @@ impl ResponseError for ServiceError {
             ServiceError::JWKSFetchError => {
                 HttpResponse::InternalServerError().json("Could not fetch JWKS")
             }
-        }
-    }
-}
-
-impl From<DBError> for ServiceError {
-    fn from(error: DBError) -> ServiceError {
-        // Right now we just care about UniqueViolation from diesel
-        // But this would be helpful to easily map errors as our app grows
-        match error {
-            DBError::DatabaseError(kind, info) => {
-                if let DatabaseErrorKind::UniqueViolation = kind {
-                    let message = info.details().unwrap_or_else(|| info.message()).to_string();
-                    return ServiceError::BadRequest(message);
-                }
-                ServiceError::InternalServerError
-            }
-            _ => ServiceError::InternalServerError,
         }
     }
 }
